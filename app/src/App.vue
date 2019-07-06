@@ -2,13 +2,12 @@
   v-app
     v-toolbar(app='')
       v-toolbar-title.headline.text-uppercase
-        span Vuetify
-        span.font-weight-light MATERIAL DESIGN
+        router-link.homeIcon.mr-2(to="/") SurveyKu
       v-spacer
-      v-btn(flat='', href='https://github.com/vuetifyjs/vuetify/releases/latest', target='_blank')
-        span.mr-2 Latest Release
+      v-btn(href='https://nd-714-641-739.int.chainstack.com', target='_blank' color="primary")
+        span.mr-2 Explorer
     v-content
-      survey
+      router-view
     v-snackbar(v-model='snackbar') {{ snackMsg }}
       v-btn(color='pink', flat='', @click='snackbar = false')
         | Close
@@ -42,3 +41,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.homeIcon {
+  color: black;
+  text-decoration: none;
+}
+</style>
