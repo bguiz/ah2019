@@ -30,7 +30,8 @@ v-container(grid-list-md)
 
 <script>
 import { findIndex, propEq, mergeRight } from 'ramda';
-
+import request from 'request';
+import axios from 'axios';
 import MCQ from './MCQ.vue';
 import SurveyDetails from './SurveyDetails.vue';
 
@@ -50,11 +51,11 @@ export default {
     return {
       valid: true,
       survey: {
-        title: null,
-        grab_id: null,
+        title: 'Title',
+        grab_id: 'random',
         currency: 'INDR',
-        reward: 0,
-        pax: 0,
+        reward: 10,
+        pax: 10,
       },
       questions: [
         {
@@ -116,7 +117,25 @@ export default {
 
       if (this.$refs.form.validate() && allSaved) {
         // check for save state
-        console.log(mergeRight(this.survey, { questions: this.questions }));
+        console.log('wag');
+        // const payload = { survey: mergeRight(this.survey, { questions: this.questions }) };
+        // axios.post('http://localhost:3333/addSurvey', payload).then(res => {
+        //   console.log(res);
+        // });
+        const payload2 = { surveyId : 1 };
+        axios.post('http://localhost:3333/getSurvey',payload2).then(res => {
+          console.log(res)
+        })
+      //   request.post('http://localhost:3333/addSurvey',payload,function optionalCallback(err, httpResponse, body) {
+      //   if (err) {
+      //     return console.error('upload failed:', err);
+      //   }
+      //   console.log('Upload successful!  Server responded with:', body);
+      // });
+        // axios.post('/addSurvey', payload)
+        //   .then((res) => {
+        //     console.log(res);
+        //   });
       }
     },
     update(question) {
