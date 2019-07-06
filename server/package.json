@@ -1,0 +1,28 @@
+{
+  "name": "surveyku-server",
+  "version": "0.0.0",
+  "description": "A server for SurveyKu",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bguiz/ah2019.git"
+  },
+  "keywords": [
+    "ah2019"
+  ],
+  "author": "bguiz",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bguiz/ah2019/issues"
+  },
+  "homepage": "https://github.com/bguiz/ah2019#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "web3": "^1.0.0-beta.55"
+  }
+}
