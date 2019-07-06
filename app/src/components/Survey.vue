@@ -37,9 +37,8 @@ v-container(grid-list-md)
 </template>
 
 <script>
-import { findIndex, propEq, mergeRight } from 'ramda';
+import { findIndex, propEq, has, omit } from 'ramda';
 import request from 'request';
-import axios from 'axios';
 import MCQ from './MCQ.vue';
 import SurveyDetails from './SurveyDetails.vue';
 import Confirmation from './Confirmation.vue';
@@ -56,6 +55,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    surveyData: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  created() {
+    if (this.surveyData && has('questions', this.surveyData)) {
+      this.questions = this.surveyData.questions;
+      this.survey = omit(['questions'], this.surveyData);
+    }
   },
   data() {
     return {
@@ -63,7 +72,8 @@ export default {
       valid: true,
       survey: {
         title: 'Title of this survey',
-        grab_id: 'random',
+        description: 'Good to have',
+        userId: 'random',
         currency: 'IDR',
         reward: 10000,
         pax: 30,
@@ -117,8 +127,8 @@ export default {
     addQuestion() {
       this.questions.push({
         id: Date.now(),
-        question: 'Dididid',
-        options: ['One', 'Two'],
+        question: '',
+        options: ['', ''],
         readonly: false,
       });
     },
@@ -126,12 +136,10 @@ export default {
     submit() {
       const allSaved = this.questions.filter(x => !x.readonly).length === 0;
 
-      if (!allSaved) {
+      if (!allSaved && this.isEdit) {
         this.$eventHub.$emit('showSnack', 'Some questions are left unsaved');
       } else if (this.$refs.form.validate()) {
-        // check for save state
         this.showConfirmation = true;
-        const payload = { survey: mergeRight(this.survey, { questions: this.questions }) };
       }
     },
     update(question) {
