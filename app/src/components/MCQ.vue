@@ -119,7 +119,9 @@ export default {
   data() {
     return {
       valid: true,
-      rules: [v => !!v || 'Whoops, did you forget me?'],
+      rules: [(v) => {
+        return v !== null || 'Whoops, did you forget me?';
+      }],
     };
   },
   methods: {

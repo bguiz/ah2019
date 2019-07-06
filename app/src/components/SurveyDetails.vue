@@ -10,7 +10,7 @@
         v-flex(xs12, md3)
           v-text-field(label="reward" v-model="reward" :rules="numRules" prepend-icon="attach_money")
         v-flex(xs12, md3)
-          v-text-field(label="num of surveyee" :rules="numRules" v-model="pax")
+          v-text-field(label="num of surveyee" :rules="numRules" v-model="pax" prepend-icon="people")
 
     v-card-title(v-else)
       div.w-100.d-flex
@@ -59,10 +59,10 @@ export default {
     },
     grabID: {
       get() {
-        return this.survey.grab_id;
+        return this.survey.userId;
       },
       set(value) {
-        this.$emit('update', { key: 'grab_id', value });
+        this.$emit('update', { key: 'userId', value });
       },
     },
     currency: {
