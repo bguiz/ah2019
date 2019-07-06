@@ -86,7 +86,6 @@ server.post('/getResults', async (req, res) => {
   try {
     const {
       surveyId,
-      numQuestions,
     } = req.body;
     const address = await web3.getAccount();
 
@@ -104,13 +103,16 @@ server.post('/getResults', async (req, res) => {
     const survey = await ipfsReadObject(ipfsHash);
     console.log(survey);
 
+    const questions = [...survey.questions];
+    const numQuestions = questions.length;
+
     const results = await web3.contract.methods
       .aggregateSurvey(surveyId, numQuestions)
       .call({
         from: address,
       });
     const numbers = results.map((bn) => bn.toNumber());
-    const questions = [...survey.questions];
+
     for (let i = 0; i < numQuestions; i++) {
       const answerCounts = [
         numbers[i * 4 + 0],
