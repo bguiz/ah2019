@@ -45,4 +45,27 @@ contract GrabSurvey {
         }
     }
 
+    function aggregateSurvey(
+        uint256 surveyId,
+        uint8 numQuestions
+    )
+        public
+        view
+        returns(uint256[] memory)
+    {
+        require(bytes(surveys[surveyId]).length > 0, "survey should exist");
+        SurveyResult storage result = results[surveyId];
+        uint256 resultSize = 4 * numQuestions;
+        uint256[] memory aggregates = new uint256[](resultSize);
+        // uint256[] memory aggregates;
+        for (uint8 i = 0; i < numQuestions; ++i) {
+            uint256[4] memory counts = result.answerCount[i];
+            aggregates[i * 4 + 0] = counts[0];
+            aggregates[i * 4 + 1] = counts[1];
+            aggregates[i * 4 + 2] = counts[2];
+            aggregates[i * 4 + 3] = counts[3];
+        }
+        return aggregates;
+    }
+
 }
