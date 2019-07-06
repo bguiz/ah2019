@@ -3,6 +3,7 @@ v-container(grid-list-md)
   v-layout(row, wrap)
     v-form.w-100(ref="form", v-model="valid", lazy-validation)
       SurveyDetails(
+        :isEdit="isEdit",
         :survey="survey", 
         @update="updateSurvey",
       )
@@ -19,13 +20,20 @@ v-container(grid-list-md)
           @removeOption="removeOption($event)",
         )
       v-layout.mt-2(row, wrap)
-        v-btn(@click="addQuestion") Add Question
+        v-btn(@click="addQuestion" v-if="isEdit") Add Question
         v-spacer
-        v-btn(s
+        v-btn(
           v-if="questions.length > 0",
           color="primary",
           @click="submit",
-        ) Create
+        ) {{ isEdit ? 'Create' : 'Submit' }}  
+  Confirmation(
+    :survey="survey",
+    :questions="questions",
+    :isEdit="isEdit",
+    :show="showConfirmation",
+    @hide="showConfirmation = false",
+  )
 </template>
 
 <script>
@@ -34,34 +42,37 @@ import request from 'request';
 import axios from 'axios';
 import MCQ from './MCQ.vue';
 import SurveyDetails from './SurveyDetails.vue';
+import Confirmation from './Confirmation.vue';
 
 export default {
   name: 'survey',
   components: {
+    Confirmation,
     MCQ,
     SurveyDetails,
   },
   props: {
     isEdit: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   data() {
     return {
+      showConfirmation: false,
       valid: true,
       survey: {
-        title: 'Title',
+        title: 'Title of this survey',
         grab_id: 'random',
-        currency: 'INDR',
-        reward: 10,
-        pax: 10,
+        currency: 'IDR',
+        reward: 10000,
+        pax: 30,
       },
       questions: [
         {
           id: Date.now(),
           question: 'random question',
-          options: ['Option A', 'Option B'],
+          options: ['Option A', 'Option B', 'Option C'],
           readonly: true,
         },
       ],
@@ -115,27 +126,12 @@ export default {
     submit() {
       const allSaved = this.questions.filter(x => !x.readonly).length === 0;
 
-      if (this.$refs.form.validate() && allSaved) {
+      if (!allSaved) {
+        this.$eventHub.$emit('showSnack', 'Some questions are left unsaved');
+      } else if (this.$refs.form.validate()) {
         // check for save state
-        console.log('wag');
-        // const payload = { survey: mergeRight(this.survey, { questions: this.questions }) };
-        // axios.post('http://localhost:3333/addSurvey', payload).then(res => {
-        //   console.log(res);
-        // });
-        const payload2 = { surveyId : 1 };
-        axios.post('http://localhost:3333/getSurvey',payload2).then(res => {
-          console.log(res)
-        })
-      //   request.post('http://localhost:3333/addSurvey',payload,function optionalCallback(err, httpResponse, body) {
-      //   if (err) {
-      //     return console.error('upload failed:', err);
-      //   }
-      //   console.log('Upload successful!  Server responded with:', body);
-      // });
-        // axios.post('/addSurvey', payload)
-        //   .then((res) => {
-        //     console.log(res);
-        //   });
+        this.showConfirmation = true;
+        const payload = { survey: mergeRight(this.survey, { questions: this.questions }) };
       }
     },
     update(question) {

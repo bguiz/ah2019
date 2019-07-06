@@ -2,27 +2,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const web3 = require('./web3.js');
-const {
-  ipfsWriteObject,
-  ipfsReadObject,
-} = require('./ipfs.js');
+const { ipfsWriteObject, ipfsReadObject } = require('./ipfs.js');
 
 const server = new express();
 const port = 3333;
 
 server.use(bodyParser.json());
 server.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 server.post('/addSurvey', async (req, res) => {
   console.log('/addSurvey', req.body);
 
   try {
-    const {
-      survey,
-    } = req.body;
+    const { survey } = req.body;
     const address = await web3.getAccount();
     JSON.stringify(survey);
 
@@ -32,12 +27,10 @@ server.post('/addSurvey', async (req, res) => {
       from: address,
     });
 
-    const receipt = await web3.contract.methods
-      .addSurvey(ipfsHash)
-      .send({
-        from: address,
-        gas: estimatedGas * 2, // quorum uses a bit extra
-      });
+    const receipt = await web3.contract.methods.addSurvey(ipfsHash).send({
+      from: address,
+      gas: estimatedGas * 2, // quorum uses a bit extra
+    });
 
     res.send({
       receipt,
@@ -46,23 +39,20 @@ server.post('/addSurvey', async (req, res) => {
     res.status(500).send(ex.toString());
     console.error(ex);
   }
-
 });
 
 server.post('/getSurvey', async (req, res) => {
   console.log('/getSurvey', req.body);
 
   try {
-    const {
-      surveyId,
-    } = req.body;
+    const { surveyId } = req.body;
+
+    console.log(req.body);
     const address = await web3.getAccount();
 
-    const ipfsHash = await web3.contract.methods
-      .surveys(surveyId)
-      .call({
-        from: address,
-      });
+    const ipfsHash = await web3.contract.methods.surveys(surveyId).call({
+      from: address,
+    });
 
     if (!ipfsHash) {
       res.status(404).send(`Survey does not exist: ${surveyId}`);
@@ -77,26 +67,19 @@ server.post('/getSurvey', async (req, res) => {
     res.status(500).send(ex.toString());
     console.error(ex);
   }
-
 });
 
 server.post('/answerSurvey', async (req, res) => {
   console.log('/answerSurvey', req.body);
 
   try {
-    const {
-      surveyId,
-      userId,
-      answers,
-    } = req.body;
+    const { surveyId, userId, answers } = req.body;
 
     const address = await web3.getAccount();
 
-    const ipfsHash = await web3.contract.methods
-      .surveys(surveyId)
-      .call({
-        from: address,
-      });
+    const ipfsHash = await web3.contract.methods.surveys(surveyId).call({
+      from: address,
+    });
 
     if (!ipfsHash) {
       res.status(404).send(`Survey does not exist: ${surveyId}`);
@@ -106,38 +89,30 @@ server.post('/answerSurvey', async (req, res) => {
     const survey = await ipfsReadObject(ipfsHash);
 
     if (survey.questions.length !== answers.length) {
-      res.status(400).send(`Survey must have the same number of answers as there are questions: answers ${
-        answers.length} questions ${survey.questions.length}`);
+      res
+        .status(400)
+        .send(
+          `Survey must have the same number of answers as there are questions: answers ${answers.length} questions ${
+            survey.questions.length
+          }`,
+        );
       return;
     }
-    for (let i = 0;  i < answers.length; ++i) {
+    for (let i = 0; i < answers.length; ++i) {
       if (answers[i] < 0 || answers[i] > 3) {
-        res.status(400).send(`Illegal answer value for question: question number ${
-          i} answer ${answers[i]}`);
+        res.status(400).send(`Illegal answer value for question: question number ${i} answer ${answers[i]}`);
         return;
       }
     }
 
-    const estimatedGas = await web3.contract.methods
-      .answerSurvey(
-        surveyId,
-        userId,
-        answers,
-      )
-      .estimateGas({
-        from: address,
-      });
+    const estimatedGas = await web3.contract.methods.answerSurvey(surveyId, userId, answers).estimateGas({
+      from: address,
+    });
 
-    const receipt = await web3.contract.methods
-      .answerSurvey(
-        surveyId,
-        userId,
-        answers,
-      )
-      .send({
-        from: address,
-        gas: estimatedGas * 2, // quorum uses a bit extra
-      });
+    const receipt = await web3.contract.methods.answerSurvey(surveyId, userId, answers).send({
+      from: address,
+      gas: estimatedGas * 2, // quorum uses a bit extra
+    });
 
     res.send({
       receipt,
@@ -152,16 +127,12 @@ server.post('/getResults', async (req, res) => {
   console.log('/getResults', req.body);
 
   try {
-    const {
-      surveyId,
-    } = req.body;
+    const { surveyId } = req.body;
     const address = await web3.getAccount();
 
-    const ipfsHash = await web3.contract.methods
-      .surveys(surveyId)
-      .call({
-        from: address,
-      });
+    const ipfsHash = await web3.contract.methods.surveys(surveyId).call({
+      from: address,
+    });
 
     if (!ipfsHash) {
       res.status(404).send(`Survey does not exist: ${surveyId}`);
@@ -174,20 +145,13 @@ server.post('/getResults', async (req, res) => {
     const questions = [...survey.questions];
     const numQuestions = questions.length;
 
-    const results = await web3.contract.methods
-      .aggregateSurvey(surveyId, numQuestions)
-      .call({
-        from: address,
-      });
-    const numbers = results.map((bn) => bn.toNumber());
+    const results = await web3.contract.methods.aggregateSurvey(surveyId, numQuestions).call({
+      from: address,
+    });
+    const numbers = results.map(bn => bn.toNumber());
 
     for (let i = 0; i < numQuestions; i++) {
-      const answerCounts = [
-        numbers[i * 4 + 0],
-        numbers[i * 4 + 1],
-        numbers[i * 4 + 2],
-        numbers[i * 4 + 3],
-      ];
+      const answerCounts = [numbers[i * 4 + 0], numbers[i * 4 + 1], numbers[i * 4 + 2], numbers[i * 4 + 3]];
       const question = {
         ...questions[i],
         answerCounts,
@@ -207,7 +171,6 @@ server.post('/getResults', async (req, res) => {
     res.status(500).send(ex.toString());
     console.error(ex);
   }
-
 });
 
 server.listen(port);

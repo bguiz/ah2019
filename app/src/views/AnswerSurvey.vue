@@ -1,5 +1,4 @@
 <template lang="pug">
-  h1 Answer Survey
     Survey
 </template>
 

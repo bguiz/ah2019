@@ -1,5 +1,5 @@
 <template lang="pug">
-  Survey
+  Survey(isEdit)
 </template>
 
 <script>

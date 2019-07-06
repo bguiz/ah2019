@@ -8,8 +8,8 @@
         span.mr-2 Explorer
     v-content
       router-view
-    v-snackbar(v-model='snackbar') {{ snackMsg }}
-      v-btn(color='pink', flat='', @click='snackbar = false')
+    v-snackbar(v-model='snackbar', color='error') {{ snackMsg }}
+      v-btn(flat, @click='snackbar = false')
         | Close
 </template>
 
