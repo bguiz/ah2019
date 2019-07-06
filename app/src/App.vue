@@ -1,29 +1,44 @@
-<template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+<template lang="pug">
+  v-app
+    v-toolbar(app='')
+      v-toolbar-title.headline.text-uppercase
+        span Vuetify
+        span.font-weight-light MATERIAL DESIGN
+      v-spacer
+      v-btn(flat='', href='https://github.com/vuetifyjs/vuetify/releases/latest', target='_blank')
+        span.mr-2 Latest Release
+    v-content
+      survey
+    v-snackbar(v-model='snackbar') {{ snackMsg }}
+      v-btn(color='pink', flat='', @click='snackbar = false')
+        | Close
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+<script>
+import Survey from './components/Survey.vue';
+
+export default {
+  name: 'App',
+  components: {
+    Survey,
+  },
+  data() {
+    return {
+      snackbar: false,
+      snackMsg: 'oh no, something seems wrong',
+    };
+  },
+  methods: {
+    showSnack(msg) {
+      this.snackMsg = msg;
+      this.snackbar = true;
+    },
+  },
+  created() {
+    this.$eventHub.$on('showSnack', this.showSnack);
+  },
+  destroyed() {
+    this.$eventHub.$off('showSnack');
+  },
+};
+</script>
