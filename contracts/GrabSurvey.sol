@@ -6,8 +6,7 @@ contract GrabSurvey {
     mapping(uint256 => string) public surveys;
 
     struct SurveyResult {
-        // dumb compiler error!
-        uint8 _blank;
+        uint8 _blank; // dumb compiler error!
 
         // key: question number, value: [number of As, number of Bs, number of Cs, number of Ds]
         mapping(uint8 => uint256[4]) answerCount;
@@ -35,15 +34,15 @@ contract GrabSurvey {
     function answerSurvey(
         uint256 surveyId,
         string memory userId,
-        uint8[16] memory answers
+        uint8[] memory answers
     ) public {
         require(bytes(surveys[surveyId]).length > 0, "survey should exist");
-        // SurveyResult storage result = ;
+        require(answers.length <= 16, "maximum answers exceeded");
+        SurveyResult storage result = results[surveyId];
         for (uint8 i = 0; i < answers.length; ++i) {
-            results[surveyId].answerCount[i][answers[i]] += 1;
+            uint8 answer = answers[i];
+            result.answerCount[i][answer] += 1;
         }
-        // TODO use userId to ensure that they haven't submitted
-        // more than once
     }
 
 }
