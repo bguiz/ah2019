@@ -80,6 +80,74 @@ server.post('/getSurvey', async (req, res) => {
 
 });
 
+server.post('/answerSurvey', async (req, res) => {
+  console.log('/answerSurvey', req.body);
+
+  try {
+    const {
+      surveyId,
+      userId,
+      answers,
+    } = req.body;
+
+    const address = await web3.getAccount();
+
+    const ipfsHash = await web3.contract.methods
+      .surveys(surveyId)
+      .call({
+        from: address,
+      });
+
+    if (!ipfsHash) {
+      res.status(404).send(`Survey does not exist: ${surveyId}`);
+      return;
+    }
+
+    const survey = await ipfsReadObject(ipfsHash);
+
+    if (survey.questions.length !== answers.length) {
+      res.status(400).send(`Survey must have the same number of answers as there are questions: answers ${
+        answers.length} questions ${survey.questions.length}`);
+      return;
+    }
+    for (let i = 0;  i < answers.length; ++i) {
+      if (answers[i] < 0 || answers[i] > 3) {
+        res.status(400).send(`Illegal answer value for question: question number ${
+          i} answer ${answers[i]}`);
+        return;
+      }
+    }
+
+    const estimatedGas = await web3.contract.methods
+      .answerSurvey(
+        surveyId,
+        userId,
+        answers,
+      )
+      .estimateGas({
+        from: address,
+      });
+
+    const receipt = await web3.contract.methods
+      .answerSurvey(
+        surveyId,
+        userId,
+        answers,
+      )
+      .send({
+        from: address,
+        gas: estimatedGas * 2, // quorum uses a bit extra
+      });
+
+    res.send({
+      receipt,
+    });
+  } catch (ex) {
+    res.status(500).send(ex.toString());
+    console.error(ex);
+  }
+});
+
 server.post('/getResults', async (req, res) => {
   console.log('/getResults', req.body);
 
