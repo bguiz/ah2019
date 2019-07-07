@@ -23,6 +23,7 @@ export default {
       axios.post('/getSurvey', { surveyId })
         .then((res) => {
           this.survey = res.data.survey;
+          this.survey.userId = 'grab_xuwhh12';
           this.doneLoading = true;
         });
     },
