@@ -1,23 +1,28 @@
 <template lang="pug">
   v-layout(row wrap)
     v-btn(:to="{ name: 'CreateSurvey' }") Create New Survey
-    v-btn(:to="{ name: 'AnswerSurvey', params: { survey_id: 2 } }") Demo Survey
+    v-btn(v-if="id !== 0" @click.native="redirect") {{ title }}
 
 
 </template>
 
 <script>
 export default {
-  methods: {
-    onAddSurvey({ title, id }) {
-      console.log('onAddSurvey',  { title, id });
+  name: 'Home',
+  props: {
+    id: {
+      type: Number,
+      default: 0,
+    },
+    title: {
+      type: String,
+      default: '',
     },
   },
-  created() {
-    this.$eventHub.$on('addSurvey', this.onAddSurvey);
-  },
-  destroyed() {
-    this.$eventHub.$off('addSurvey');
+  methods: {
+    redirect() {
+      this.$router.push({name: 'AnswerSurvey', params: { survey_id: this.id } });
+    },
   },
 };
 </script>
