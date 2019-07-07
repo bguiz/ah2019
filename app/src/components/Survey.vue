@@ -4,7 +4,7 @@ v-container(grid-list-md)
     v-form.w-100(ref="form", v-model="valid", lazy-validation)
       SurveyDetails(
         :isEdit="isEdit",
-        :survey="survey", 
+        :survey="survey",
         @update="updateSurvey",
       )
       v-layout(row wrap)
@@ -26,7 +26,7 @@ v-container(grid-list-md)
           v-if="questions.length > 0",
           color="primary",
           @click="submit",
-        ) {{ isEdit ? 'Create' : 'Submit' }}  
+        ) {{ isEdit ? 'Create' : 'Submit' }}
   Confirmation(
     :survey="survey",
     :questions="questions",
@@ -124,8 +124,8 @@ export default {
       const questionIndex = this.getQuestionIndex(id);
       const options = this.questions[questionIndex].options;
 
-      if (options.length < 3) {
-        this.$eventHub.$emit('showSnack', 'Kind of werid with only 1 option');
+      if (options.length !== 4) {
+        this.$eventHub.$emit('showSnack', 'Must have 4 options');
       } else {
         options.splice(index, 1);
       }
