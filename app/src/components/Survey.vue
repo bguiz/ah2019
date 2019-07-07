@@ -71,9 +71,9 @@ export default {
       showConfirmation: false,
       valid: true,
       survey: {
-        title: 'Title of this survey',
+        title: 'This is a test survey for creation demo',
         description: 'Good to have',
-        userId: 'random',
+        userId: 'yourgrabID',
         currency: 'IDR',
         reward: 10000,
         pax: 30,
@@ -81,10 +81,22 @@ export default {
       questions: [
         {
           id: Date.now(),
-          question: 'random question',
-          options: ['Option A', 'Option B', 'Option C'],
+          question: 'What day is it',
+          options: ['Monday','Tuesday','Wednesday','Saturday'],
           readonly: true,
         },
+        {
+          id: Date.now(),
+          question: 'Where are we',
+          options: ['Singapore','New Zealand','Australia '],
+          readonly: true,
+        },
+        {
+          id: Date.now(),
+          question: 'Is Chainstack good',
+          options: ['YES','VERY','Extremely','TOTALLY GOOD'],
+          readonly: true,
+        }
       ],
     };
   },

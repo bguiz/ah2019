@@ -83,13 +83,12 @@ export default {
   },
   methods: {
     getSurvey(surveyId) {
-      this.survey = surveyTemplate.survey;
+      // this.survey = surveyTemplate.survey;
       // uncomment this to call getSurvey api
-      // axios.post('/getSurvey', { surveyId })
-      //   .then((res) => {
-      //     // this.survey = res.body.survey;
-      //     console.log(res);
-      //   });
+      axios.post('/getSurvey', { surveyId })
+        .then((res) => {
+          this.survey = res.body.data.survey;
+        });
     },
   },
 };
