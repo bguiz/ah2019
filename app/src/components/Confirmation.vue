@@ -93,6 +93,7 @@ export default {
         payload.surveyId = this.$route.params.survey_id;
 
         this.isLoading = true;
+        console.log("answering survey")
         axios.post('/answerSurvey', mergeRight(payload, { answers }))
           .then((res) => {
             this.isLoading = false;
