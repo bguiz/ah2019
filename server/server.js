@@ -32,7 +32,10 @@ server.post('/addSurvey', async (req, res) => {
       gas: estimatedGas * 2, // quorum uses a bit extra
     });
 
+    const surveyId = receipt.events.SurveyAdded.returnValues.surveyId.toNumber();
+
     res.send({
+      surveyId,
       receipt,
     });
   } catch (ex) {
