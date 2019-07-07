@@ -78,8 +78,6 @@ export default {
 
         const payload = { survey: mergeRight(this.survey, { questions: strippedQuestions }) };
 
-        
-        console.log("Attempting to add new survey & send to blockchain...")
         console.log(payload);
         //uncomment to call add survey
         this.isLoading = true;
@@ -93,17 +91,13 @@ export default {
       } else {
         const payload = pick(['userId', 'surveyId'], this.survey);
         const answers = map(x => x + 1, pluck(['answer'], this.questions));
-        
-        console.log("Adding answers to survey on the blockchain..")
-        console.log(mergeRight(payload, { answers }));
-        // uncomment this to call getSurvey api
+
         this.isLoading = true;
         axios.post('/answerSurvey', mergeRight(payload, { answers }))
           .then((res) => {
             this.isLoading = false;
             this.$emit('hide');
-            console.log(res);
-            router.push({ name: 'home' });
+            router.push({ name: 'SurveyResult', params: { survey_id: payload.surveyId } });
           });
       }
     },

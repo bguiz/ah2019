@@ -1,16 +1,16 @@
 <template lang="pug">
-    Survey(:surveyData="survey" v-if="doneLoading")
+    Result(v-if="doneLoading" :survey="survey")
 </template>
 
 <script>
-import Survey from '../components/Survey';
+import Result from '../components/Result.vue';
 
 export default {
   components: {
-    Survey,
+    Result,
   },
   created() {
-    this.getSurvey(this.$route.params.survey_id);
+    this.getResult(this.$route.params.survey_id);
   },
   data() {
     return {
@@ -19,8 +19,8 @@ export default {
     };
   },
   methods: {
-    getSurvey(surveyId) {
-      axios.post('/getSurvey', { surveyId })
+    getResult(surveyId) {
+      axios.post('/getResults', { surveyId })
         .then((res) => {
           this.survey = res.data.survey;
           this.doneLoading = true;

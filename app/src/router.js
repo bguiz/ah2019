@@ -23,5 +23,10 @@ export default new Router({
       name: 'AnswerSurvey',
       component: () => import(/* webpackChunkName: "about" */ './views/AnswerSurvey.vue'),
     },
+    {
+      path: '/result/:survey_id',
+      name: 'SurveyResult',
+      component: () => import(/* webpackChunkName: "about" */ './views/SurveyResult.vue'),
+    },
   ],
 });
