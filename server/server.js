@@ -42,12 +42,12 @@ server.post('/addSurvey', async (req, res) => {
 });
 
 server.post('/getSurvey', async (req, res) => {
-  console.log('/getSurvey', req.body);
+ console.log('we are at getsurvey');
+ console.log('/getSurvey', req.body);
 
   try {
     const { surveyId } = req.body;
 
-    console.log(req.body);
     const address = await web3.getAccount();
 
     const ipfsHash = await web3.contract.methods.surveys(surveyId).call({
@@ -57,7 +57,9 @@ server.post('/getSurvey', async (req, res) => {
     if (!ipfsHash) {
       res.status(404).send(`Survey does not exist: ${surveyId}`);
     } else {
+      console.log("starting reading")
       const ipfsData = await ipfsReadObject(ipfsHash);
+      console.log("finish reading")
       // console.log(ipfsData)
       res.send({
         survey: ipfsData,
@@ -80,7 +82,8 @@ server.post('/answerSurvey', async (req, res) => {
     const ipfsHash = await web3.contract.methods.surveys(surveyId).call({
       from: address,
     });
-
+    console.log("the ipfsHash is")
+    console.log(ipfsHash)
     if (!ipfsHash) {
       res.status(404).send(`Survey does not exist: ${surveyId}`);
       return;
