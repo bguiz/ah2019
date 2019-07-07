@@ -4,7 +4,7 @@
       v-toolbar-title.headline.text-uppercase
         router-link.homeIcon.mr-2(to="/") SurveyKu
       v-spacer
-      v-btn(href='https://nd-714-641-739.int.chainstack.com', target='_blank' color="primary")
+      v-btn(href='https://nd-714-641-739.int.chainstack.com/transactions', target='_blank' color="primary")
         span.mr-2 Explorer
     v-content
       router-view

@@ -71,30 +71,30 @@ export default {
       showConfirmation: false,
       valid: true,
       survey: {
-        title: 'This is a test survey for creation demo',
+        title: 'Angelhack 2019 Post Event Survey',
         description: 'Good to have',
-        userId: 'yourgrabID',
+        userId: 'grab_cs3acs2',
         currency: 'IDR',
         reward: 10000,
         pax: 30,
       },
       questions: [
         {
-          id: Date.now(),
-          question: 'What day is it',
-          options: ['Monday','Tuesday','Wednesday','Saturday'],
+          id: Date.now()+1,
+          question: "What is your favourite activity",
+          options: ['Hulahoop Challenge','Mask invasion','Pitch Workshop','Business Model Canvas'],
           readonly: true,
         },
         {
-          id: Date.now(),
-          question: 'Where are we',
-          options: ['Singapore','New Zealand','Australia '],
+          id: Date.now()+3,
+          question: 'Who is the most attractive :)',
+          options: ['Jonas for sure','Jasmine obviously','Nicole Upchurch duh?','of course Chirag Batra'],
           readonly: true,
         },
         {
-          id: Date.now(),
-          question: 'Is Chainstack good',
-          options: ['YES','VERY','Extremely','TOTALLY GOOD'],
+          id: Date.now()+2,
+          question: 'Which Sponsor is your favorite?',
+          options: ['Angelhack','Grab','Centrality ','IBM'],
           readonly: true,
         }
       ],
@@ -139,8 +139,8 @@ export default {
     addQuestion() {
       this.questions.push({
         id: Date.now(),
-        question: '',
-        options: ['', ''],
+        question: 'What is your favourite food?',
+        options: ['Nasi Lemak', 'Pasta','Pizza'],
         readonly: false,
       });
     },
