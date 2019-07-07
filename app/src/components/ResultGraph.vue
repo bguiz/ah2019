@@ -28,7 +28,8 @@ export default {
   },
   methods: {
     getPercentage(index) {
-      return (this.result.answerCounts[index] / this.totalCount) * 100;
+      const r = this.result.answerCounts[index] / this.totalCount * 100;
+      return Math.round(r * 10) / 10
     },
   }
 }
