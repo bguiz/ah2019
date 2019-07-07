@@ -87,7 +87,7 @@ export default {
       // uncomment this to call getSurvey api
       axios.post('/getSurvey', { surveyId })
         .then((res) => {
-          this.survey = res.body.data.survey;
+          this.survey = res.data.survey;
         });
     },
   },

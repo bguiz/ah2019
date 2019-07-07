@@ -6,20 +6,20 @@
         :class="{'pt-0': isEdit}",
       )
         div(v-if="isEdit")
-          h3.title.mb-0 Grab ID: 
+          h3.title.mb-0 Grab ID:
             span.green--text.title {{ survey.userId }}
           h3.title.mb-0 Total Cost: {{ survey.currency }} {{ total.toLocaleString() }}
           ul
             li {{ questions.length }} Survey Questions
-            li {{ survey.pax }} survyee 
+            li {{ survey.pax }} survyee
             li {{ survey.currency }} {{ survey.reward.toLocaleString() }} reward each
 
         div(v-else)
           h3.title.mb-2 Confirm Submit Survey?
-          h3.subtitle.mb-0 Grab ID: 
+          h3.subtitle.mb-0 Grab ID:
             span.green--text.title {{ survey.userId }}
 
-          div.pt-2 You will earn {{ survey.currency }} 
+          div.pt-2 You will earn {{ survey.currency }}
             span.bold {{ survey.reward.toLocaleString() }}!
 
       v-card-actions
@@ -78,22 +78,25 @@ export default {
 
         const payload = { survey: mergeRight(this.survey, { questions: strippedQuestions }) };
 
-        
         console.log("Attempting to add new survey & send to blockchain...")
-        console.log(payload);
+        console.log('addSurvey payload', payload);
         //uncomment to call add survey
         this.isLoading = true;
         axios.post('/addSurvey', payload)
           .then(res => {
             this.isLoading = false;
             this.$emit('hide');
-            console.log(res);
-            router.push({ name: 'home' });
+            console.log('addSurvey response', res);
+            // payload title and id
+            const { title } = payload;
+            const id = res.data.surveyId;
+            this.$router.push({ name: 'home' });
+            this.$eventHub.$emit('addSurvey', { title, id });
           });
       } else {
         const payload = pick(['userId', 'surveyId'], this.survey);
         const answers = map(x => x + 1, pluck(['answer'], this.questions));
-        
+
         console.log("Adding answers to survey on the blockchain..")
         console.log(mergeRight(payload, { answers }));
         // uncomment this to call getSurvey api
@@ -103,7 +106,7 @@ export default {
             this.isLoading = false;
             this.$emit('hide');
             console.log(res);
-            router.push({ name: 'home' });
+            this.$router.push({ name: 'home' });
           });
       }
     },
