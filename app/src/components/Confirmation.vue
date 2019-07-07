@@ -89,7 +89,7 @@ export default {
           });
       } else {
         const payload = pick(['userId', 'surveyId'], this.survey);
-        const answers = map(x => x + 1, pluck(['answer'], this.questions));
+        const answers = map(x => x, pluck(['answer'], this.questions));
         payload.surveyId = this.$route.params.survey_id;
 
         this.isLoading = true;
