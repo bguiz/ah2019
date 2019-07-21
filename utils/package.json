@@ -1,0 +1,19 @@
+{
+  "name": "web3Compiler",
+  "version": "1.0.0",
+  "description": "Compile deploy test your contract all in one place",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.0.0",
+    "fs": "0.0.1-security",
+    "solc": "^0.5.0",
+    "web3": "^1.0.0-beta.55"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "thomasRalee",
+  "license": "ISC"
+}
