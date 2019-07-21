@@ -51,19 +51,23 @@ contract Survey {
     @dev This function first generate the appropriate key, and then gets the question struct
     **/ 
     function answerQuestion(bytes32 _question,bytes32 _answers) external returns (bool success){
-        bytes32 questionid = keccak256(abi.encodePacked(_question));
+        bytes32 questionId = keccak256(abi.encodePacked(_question));
         bytes32 answerId = keccak256(abi.encodePacked(_answers));
-        questions[questionid].answerMap[answerId].count++;
+        questions[questionId].answerMap[answerId].count++;
         return true;
     }
 
-    function getQuestionIds() public view returns(bytes32[] memory) {
+    function getQuestionIds() external view returns(bytes32[] memory) {
         return questionIds;
     }
-    function getQuestions() public view returns(bytes32[] memory) {
+    function getQuestions() external view returns(bytes32[] memory) {
         return questionArray;
     }
     function getTitle() external view returns(string memory) {
         return title;
+    }
+    function getOption(bytes32 _question) external view returns(bytes32[] memory) {
+        bytes32 questionId = keccak256(abi.encodePacked(_question));
+        return questions[questionId].answerKeys;
     }
 }

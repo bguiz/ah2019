@@ -4,6 +4,7 @@ interface Survey {
 	 function getQuestionIds() external view returns(bytes32[] memory);
 	 function getQuestions() external view returns(bytes32[] memory);
 	 function getTitle() external view returns(string memory);
+	 function getOption(bytes32 _question) external view returns(bytes32[] memory);
 }
 
 /**
@@ -78,10 +79,18 @@ contract SurveyTracker {
 	}
 	/**
 	@notice similar as above, return questionArray
-	@dev
+	@dev Gets the array of survey questions itself
 	**/
 	function getSurveyQuestionArray(address _surveyAddress) external view returns (bytes32[] memory) {
 		Survey survey = Survey(_surveyAddress);
 		return (survey.getQuestions());
+	}
+	/**
+	@notice Gets the list of options for a particular question
+	@dev Accepts the question string itself & survey address
+	**/
+	function getOptions(address _surveyAddress,bytes32 _question) external view returns (bytes32, bytes32[] memory) {
+		Survey survey = Survey(_surveyAddress);
+		return (_question,survey.getOption(_question));
 	}	
 }	

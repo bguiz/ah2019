@@ -65,6 +65,9 @@ server.post('/newSurvey',async(req,res) => {
 		const survey = req.body
 		const title = survey.title;
 		const question = survey.question;
+		// const surveyContract = await deployContract(compileContract('survey.sol'),title)
+		// const address = await getAddress()
+		// const trackerContract = await getTracker(interface,bytecode,TrackerAddresses.last())
 		const promiseArray =[
 						deployContract(compileContract('survey.sol'),title),
 						getAddress(),
@@ -80,9 +83,10 @@ server.post('/newSurvey',async(req,res) => {
 			}).then(async(result) => {
 				const questionPromiseArray = []
 				question.forEach((item) => {
-					const options = ['Yes','No','Very very No','YES YES YES']
+					const options = ['Yes','No','Very very No']
 					stringToBytes32(options).then(async (result) => {
 						questionHex = await web3.utils.fromAscii(item)
+						console.log(result)
 						//result is in bytes32
 						questionPromiseArray.push(surveyContract.methods.createQuestion(questionHex,result).send({
 							from:currentAccount,
@@ -145,7 +149,7 @@ server.get('/getAllSurveys',async(req,res) => {
 })
 
 /**
-@notice Get all questions
+@notice Get all questions and their options
 @dev
 **/
 server.post('/getQuestions',async(req,res) => {
@@ -153,8 +157,18 @@ server.post('/getQuestions',async(req,res) => {
 		const surveyAddress = req.body.surveyAddress;
 		const trackerContract = await getTracker(interface,bytecode,TrackerAddresses.last());
 		trackerContract.methods.getSurveyQuestionArray(surveyAddress).call({}).then((result) => {
+			const promiseArray = []
+			result.forEach((item) => {
+				promiseArray.push(trackerContract.methods.getOptions(surveyAddress,item).call({}))
+			})
+		Promise.all(promiseArray).then((result) => {
+			result.forEach((item) => {
+				console.log(item)
+			})
 			res.send(result)
 		})
+		})
+
 	}catch (ex){
 		res.status(500).send(ex.toString())
 		console.log(ex)
