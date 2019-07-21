@@ -1,6 +1,8 @@
 pragma solidity = 0.5.0;
 
 interface Survey {
+	 function getQuestionIds() external view returns(bytes32[] memory);
+	 function getQuestions() external view returns(bytes32[] memory);
 	 function getTitle() external view returns(string memory);
 }
 
@@ -67,7 +69,19 @@ contract SurveyTracker {
 		return (survey.getTitle(),surveyAddressMap[_surveyId]);
 	}
 	/**
-	@notice Get the all Titles Immediately
+	@notice Get all surveyQuestion IDS
+	@dev Front-end will have to supply the surveyAddress
+	**/
+	function getSurveyQuestionIds(address _surveyAddress) external view returns (bytes32[] memory) {
+		Survey survey = Survey(_surveyAddress);
+		return (survey.getQuestionIds());
+	}
+	/**
+	@notice similar as above, return questionArray
 	@dev
 	**/
+	function getSurveyQuestionArray(address _surveyAddress) external view returns (bytes32[] memory) {
+		Survey survey = Survey(_surveyAddress);
+		return (survey.getQuestions());
+	}	
 }	

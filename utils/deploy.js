@@ -14,13 +14,13 @@ function getAddress() {
   return web3.eth.getAccounts().then(accounts => accounts[0]);
 }
 
-async function deployContract(contractData,title,question) {
+async function deployContract(contractData,title) {
   const address = await getAddress(web3);
   const contract = new web3.eth.Contract(contractData.interface);
   return contract
     .deploy({
       data: contractData.bytecode,
-      arguments:[title,question],
+      arguments:[title],
     })
     .send({
       from: address,
@@ -29,7 +29,7 @@ async function deployContract(contractData,title,question) {
     })
     .on('error', console.error)
     .then(contractInstance => {
-      return contractInstance.options.address;
+      return contractInstance;
     });
 }
 
