@@ -15,9 +15,7 @@ const port = 3334;
 @dev If you create a new Tracker, this is automatically updated.
 **/
 const TrackerAddresses = JSON.parse(fs.readFileSync('./utils/trackers.json'))
-server.use(bodyParser.urlencoded({
-  extended: true
-}));
+server.use(bodyParser())
 
 server.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -63,11 +61,12 @@ server.get('/getSurveyIds',async(req,res) => {
 server.post('/newSurvey',async(req,res) => {
 	try {
 		const survey = req.body
-		const title = survey.title;
-		const question = survey.question;
-		// const surveyContract = await deployContract(compileContract('survey.sol'),title)
-		// const address = await getAddress()
-		// const trackerContract = await getTracker(interface,bytecode,TrackerAddresses.last())
+
+		//how to store the data?
+		// const surveyArray = splitString(JSON.stringify(survey), 256);
+		// console.log(surveyArray);
+		const title = survey.title
+		const questions = survey.questions
 		const promiseArray =[
 						deployContract(compileContract('survey.sol'),title),
 						getAddress(),
@@ -82,11 +81,10 @@ server.post('/newSurvey',async(req,res) => {
 				from:currentAccount
 			}).then(async(result) => {
 				const questionPromiseArray = []
-				question.forEach((item) => {
-					const options = ['Yes','No','Very very No']
+				questions.forEach((item) => {
+					const options = item.options
 					stringToBytes32(options).then(async (result) => {
-						questionHex = await web3.utils.fromAscii(item)
-						console.log(result)
+						questionHex = await web3.utils.fromAscii(item.text)
 						//result is in bytes32
 						questionPromiseArray.push(surveyContract.methods.createQuestion(questionHex,result).send({
 							from:currentAccount,
@@ -102,7 +100,7 @@ server.post('/newSurvey',async(req,res) => {
 		})
 	} catch(ex) {
 		res.status(500).send(ex.toString())
-		console.log(ex.toString())
+		
 	}
 
 })
@@ -162,9 +160,6 @@ server.post('/getQuestions',async(req,res) => {
 				promiseArray.push(trackerContract.methods.getOptions(surveyAddress,item).call({}))
 			})
 		Promise.all(promiseArray).then((result) => {
-			result.forEach((item) => {
-				console.log(item)
-			})
 			res.send(result)
 		})
 		})
@@ -172,6 +167,44 @@ server.post('/getQuestions',async(req,res) => {
 	}catch (ex){
 		res.status(500).send(ex.toString())
 		console.log(ex)
+	}
+})
+
+/**
+@notice answer the questions
+@dev Include the question and selected text in the body
+**/
+
+server.post('/answerQuestion',async(req,res) => {
+	try {
+		const surveyAddress = req.body.address;
+		const surveyAnswers = req.body.answers;
+		const trackerContract = await getTracker(interface,bytecode,TrackerAddresses.last());
+		const account = await getAddress();
+		const promiseArray = []
+		surveyAnswers.forEach((item) => {
+			questionArray = [item.text,item.option]
+			promiseArray.push(stringToBytes32(questionArray))
+		})
+		Promise.all(promiseArray).then((result) => {
+			const promiseArray2 = []
+			result.forEach((item) => {
+				promiseArray2.push(trackerContract.methods.answerQuestion(surveyAddress,item[0],item[1]).send({
+					from:account,
+					gas:470000000,
+				}))
+			})
+			Promise.all(promiseArray2).then((result) => {
+				result.forEach((item)=> {
+					console.log(item.transactionHash)
+				})
+				res.send('success')
+				res.end()
+			})
+
+		}) 
+	}catch(ex) {
+		res.status(500).send(ex.toString())
 	}
 })
 
@@ -187,6 +220,14 @@ server.post('/post',async(req,res) => {
 		res.status(400)
 	}
 })
+
+/**
+Cut string
+**/
+
+function splitString(string, length) {
+  return string.match(new RegExp(`.{1,${length}}`, 'g'));
+}
 
 /**
 @notice helper function to convert an array of stirngs to bytes32
